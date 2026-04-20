@@ -20,14 +20,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const spotsLeft = details.max_participants - details.participants.length;
         
-        let emailsList = "";
-        if (details.participants.length > 0) {
-          emailsList = details.participants.map(email => 
-            `<li>${email} <button class="delete-btn" data-activity="${name}" data-email="${email}">✕</button></li>`
-          ).join("");
-        } else {
-          emailsList = "<li><em>No participants yet</em></li>";
-        }
+         let emailsList = "";
+         if (details.participants.length > 0) {
+           emailsList = details.participants.map(email => 
+             `<li>${email} <button class="edit-btn" data-activity="${name}" data-email="${email}">✎</button> <button class="delete-btn" data-activity="${name}" data-email="${email}">✕</button></li>`
+           ).join("");
+         } else {
+           emailsList = "<li><em>No participants yet</em></li>";
+         }
 
         activityCard.innerHTML = `
           <h4>${name}</h4>
@@ -131,6 +131,48 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.className = "error";
         messageDiv.classList.remove("hidden");
         console.error("Error removing participant:", error);
+      }
+    }
+
+    // Handle edit button clicks
+    if (event.target.classList.contains("edit-btn")) {
+      const activity = event.target.dataset.activity;
+      const oldEmail = event.target.dataset.email;
+      const newEmail = prompt(`Edit email for ${activity}:`, oldEmail);
+
+      if (newEmail && newEmail !== oldEmail) {
+        try {
+          const response = await fetch(
+            `/activities/${encodeURIComponent(activity)}/edit?old_email=${encodeURIComponent(oldEmail)}&new_email=${encodeURIComponent(newEmail)}`,
+            {
+              method: "POST",
+            }
+          );
+
+          const result = await response.json();
+
+          if (response.ok) {
+            messageDiv.textContent = result.message;
+            messageDiv.className = "success";
+            // Refresh activities list in real-time
+            fetchActivities();
+          } else {
+            messageDiv.textContent = result.detail || "An error occurred";
+            messageDiv.className = "error";
+          }
+
+          messageDiv.classList.remove("hidden");
+
+          // Hide message after 5 seconds
+          setTimeout(() => {
+            messageDiv.classList.add("hidden");
+          }, 5000);
+        } catch (error) {
+          messageDiv.textContent = "Failed to edit participant. Please try again.";
+          messageDiv.className = "error";
+          messageDiv.classList.remove("hidden");
+          console.error("Error editing participant:", error);
+        }
       }
     }
   });
