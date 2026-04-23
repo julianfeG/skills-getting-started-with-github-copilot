@@ -79,7 +79,7 @@ activities = {
         "description": "Create paintings, sculptures, and digital art under professional guidance",
         "schedule": "Thursdays, 4:00 PM - 5:30 PM",
         "max_participants": 3,
-        "participants": ["zoe@mergington.edu"]
+        "participants": ["zoe@mergington.edu.co"]
     },
     "Robotics Club": {
         "description": "Design and build robots, participate in robotics competitions",
