@@ -161,7 +161,7 @@ def remove_from_activity(activity_name: str, email: str):
 
 @app.post("/activities/{activity_name}/edit")
 def edit_participant_email(activity_name: str, old_email: str, new_email: str):
-    """Edit a participant's email in an activity"""
+    """Edit a student's email in an activity"""
     # Validate activity exists
     if activity_name not in activities:
         raise HTTPException(status_code=404, detail="Activity not found")
@@ -178,11 +178,11 @@ def edit_participant_email(activity_name: str, old_email: str, new_email: str):
         if other_activity_name != activity_name and new_email in other_activity["participants"]:
             raise HTTPException(status_code=400, detail=f"Email already registered in {other_activity_name}")
 
-    # Check if new email is already registered in this activity
+    # Check if new email is already in the current activity
     if new_email in activity["participants"]:
         raise HTTPException(status_code=400, detail="Email already registered in this activity")
 
-    # Update email
+    # Edit the email
     index = activity["participants"].index(old_email)
     activity["participants"][index] = new_email
     return {"message": f"Updated email from {old_email} to {new_email} in {activity_name}"}

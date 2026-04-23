@@ -30,8 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Create participants list HTML
         let emailsList = "";
         if (details.participants.length > 0) {
-          emailsList = details.participants.map(email =>
-            `<li>${email} <button class="edit-btn" data-activity="${name}" data-email="${email}">✎</button><button class="delete-btn" data-activity="${name}" data-email="${email}">✕</button></li>`
+          emailsList = details.participants.map(email => 
+            `<li>${email} <button class="edit-btn" data-activity="${name}" data-email="${email}">✎</button> <button class="delete-btn" data-activity="${name}" data-email="${email}">✕</button></li>`
           ).join("");
         } else {
           emailsList = "<li><em>No participants yet</em></li>";
