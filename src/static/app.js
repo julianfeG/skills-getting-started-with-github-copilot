@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const editForm = document.getElementById("edit-form");
   const closeBtn = document.querySelector(".close");
   const cancelBtn = document.querySelector(".cancel-btn");
-  
+
   let currentEditData;
 
   // Function to fetch activities from API
@@ -25,10 +25,11 @@ document.addEventListener("DOMContentLoaded", () => {
         activityCard.className = "activity-card";
 
         const spotsLeft = details.max_participants - details.participants.length;
-        
+
+        // Create participants list HTML
         let emailsList = "";
         if (details.participants.length > 0) {
-          emailsList = details.participants.map(email => 
+          emailsList = details.participants.map(email =>
             `<li>${email} <button class="edit-btn" data-activity="${name}" data-email="${email}">✎</button><button class="delete-btn" data-activity="${name}" data-email="${email}">✕</button></li>`
           ).join("");
         } else {
