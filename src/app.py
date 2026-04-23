@@ -79,7 +79,7 @@ activities = {
         "description": "Create paintings, sculptures, and digital art under professional guidance",
         "schedule": "Thursdays, 4:00 PM - 5:30 PM",
         "max_participants": 3,
-        "participants": ["zoe@mergington.edu"]
+        "participants": ["zoe@mergington.edu.co"]
     },
     "Robotics Club": {
         "description": "Design and build robots, participate in robotics competitions",
@@ -126,6 +126,10 @@ def signup_for_activity(activity_name: str, email: str):
 
     # Get the specific activity
     activity = activities[activity_name]
+
+    # Check if email is already registered in this activity
+    if email in activity["participants"]:
+        raise HTTPException(status_code=400, detail="Email already registered in this activity")
 
     # Check if activity is full
     if len(activity["participants"]) >= activity["max_participants"]:
