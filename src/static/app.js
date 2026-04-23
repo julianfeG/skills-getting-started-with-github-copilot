@@ -3,6 +3,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const activitySelect = document.getElementById("activity");
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
+  const editModal = document.getElementById("edit-modal");
+  const editForm = document.getElementById("edit-form");
+  const closeBtn = document.querySelector(".close");
+  const cancelBtn = document.querySelector(".cancel-btn");
+  
+  let currentEditData;
 
   // Function to fetch activities from API
   async function fetchActivities() {
@@ -23,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let emailsList = "";
         if (details.participants.length > 0) {
           emailsList = details.participants.map(email => 
-            `<li>${email} <button class="delete-btn" data-activity="${name}" data-email="${email}">✕</button></li>`
+            `<li>${email} <button class="edit-btn" data-activity="${name}" data-email="${email}">✎</button><button class="delete-btn" data-activity="${name}" data-email="${email}">✕</button></li>`
           ).join("");
         } else {
           emailsList = "<li><em>No participants yet</em></li>";
@@ -132,6 +138,75 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.classList.remove("hidden");
         console.error("Error removing participant:", error);
       }
+    }
+
+    // Handle edit button clicks
+    if (event.target.classList.contains("edit-btn")) {
+      const activity = event.target.dataset.activity;
+      const email = event.target.dataset.email;
+
+      currentEditData = { activity, oldEmail: email };
+      document.getElementById("old-email").value = email;
+      document.getElementById("new-email").value = "";
+      editModal.classList.remove("hidden");
+    }
+  });
+
+  // Close modal when clicking the X button or cancel button
+  closeBtn.addEventListener("click", () => {
+    editModal.classList.add("hidden");
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    editModal.classList.add("hidden");
+  });
+
+  // Close modal when clicking outside of it
+  window.addEventListener("click", (event) => {
+    if (event.target === editModal) {
+      editModal.classList.add("hidden");
+    }
+  });
+
+  // Handle edit form submission
+  editForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const newEmail = document.getElementById("new-email").value;
+    const { activity, oldEmail } = currentEditData;
+
+    try {
+      const response = await fetch(
+        `/activities/${encodeURIComponent(activity)}/edit?old_email=${encodeURIComponent(oldEmail)}&new_email=${encodeURIComponent(newEmail)}`,
+        {
+          method: "POST",
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok) {
+        messageDiv.textContent = result.message;
+        messageDiv.className = "success";
+        editModal.classList.add("hidden");
+        // Refresh activities list in real-time
+        fetchActivities();
+      } else {
+        messageDiv.textContent = result.detail || "An error occurred";
+        messageDiv.className = "error";
+      }
+
+      messageDiv.classList.remove("hidden");
+
+      // Hide message after 5 seconds
+      setTimeout(() => {
+        messageDiv.classList.add("hidden");
+      }, 5000);
+    } catch (error) {
+      messageDiv.textContent = "Failed to update email. Please try again.";
+      messageDiv.className = "error";
+      messageDiv.classList.remove("hidden");
+      console.error("Error updating email:", error);
     }
   });
 
