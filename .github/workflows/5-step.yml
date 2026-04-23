@@ -29,18 +29,18 @@ jobs:
       ISSUE_NUMBER: ${{ needs.find_exercise.outputs.issue-number }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+       - name: Checkout
+         uses: actions/checkout@v6
 
-      - name: Get response templates
-        uses: actions/checkout@v5
-        with:
-          repository: skills/exercise-toolkit
-          path: exercise-toolkit
-          ref: v0.8.1
+       - name: Get response templates
+         uses: actions/checkout@v6
+         with:
+           repository: skills/exercise-toolkit
+           path: exercise-toolkit
+           ref: v0.8.1
 
-      - name: Create comment - step finished - final review next
-        uses: GrantBirki/comment@v2.1.1
+       - name: Create comment - step finished - final review next
+         uses: GrantBirki/comment@v2.1.1
         with:
           repository: ${{ env.ISSUE_REPOSITORY }}
           issue-number: ${{ env.ISSUE_NUMBER }}
